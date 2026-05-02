@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0, user-scalable=no">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <title>Nota Karet Digital Pro - Gun Project</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ==================== HTML SECTION ==================== -->
+
+<!-- MODAL STRUK -->
+<div id="modal-struk" class="modal-overlay">
+    <div class="modal-bg" onclick="tutupStruk()"></div>
+    <div class="modal-card">
+        <div id="isi-struk"></div>
+        <div class="modal-actions">
+            <button class="btn-close-modal" onclick="tutupStruk()">Tutup</button>
+            <button id="btn-cetak-struk" class="btn-print-modal">Cetak Struk</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL KALKULATOR -->
+<div id="modal-kalkulator" class="modal-overlay">
+    <div class="modal-bg" onclick="tutupKalkulator()"></div>
+    <div class="modal-card" style="max-width: 380px;">
+        <div style="text-align:center; margin-bottom: 20px;">
+            <h2 style="margin:0; font-size: 1.2rem; color:#1e293b;">Kalkulator Nota</h2>
+            <p style="font-size:11px; color:#94a3b8; margin-top:4px;">Hasil akan tampil di kartu nota</p>
+        </div>
+        <div class="form-group">
+            <label class="label-small">Judul Hasil (Opsional)</label>
+            <input type="text" id="calc-label-input" placeholder="Contoh: Kalkulator digunakan" value="Kalkulator digunakan">
+        </div>
+        <input type="text" class="calc-display" id="calc-display" readonly placeholder="0">
+        <div class="calc-grid">
+            <button class="calc-btn clear" onclick="resetKalkulator()">C</button>
+            <button class="calc-btn op" onclick="ketikKalkulator('/')">÷</button>
+            <button class="calc-btn op" onclick="ketikKalkulator('*')">×</button>
+            <button class="calc-btn op" onclick="hapusKalkulator()">⌫</button>
+            <button class="calc-btn" onclick="ketikKalkulator('7')">7</button>
+            <button class="calc-btn" onclick="ketikKalkulator('8')">8</button>
+            <button class="calc-btn" onclick="ketikKalkulator('9')">9</button>
+            <button class="calc-btn op" onclick="ketikKalkulator('-')">−</button>
+            <button class="calc-btn" onclick="ketikKalkulator('4')">4</button>
+            <button class="calc-btn" onclick="ketikKalkulator('5')">5</button>
+            <button class="calc-btn" onclick="ketikKalkulator('6')">6</button>
+            <button class="calc-btn op" onclick="ketikKalkulator('+')">+</button>
+            <button class="calc-btn" onclick="ketikKalkulator('1')">1</button>
+            <button class="calc-btn" onclick="ketikKalkulator('2')">2</button>
+            <button class="calc-btn" onclick="ketikKalkulator('3')">3</button>
+            <button class="calc-btn equal" style="grid-row: span 2;" onclick="hitungKalkulator()">=</button>
+            <button class="calc-btn" style="grid-column: span 2;" onclick="ketikKalkulator('0')">0</button>
+            <button class="calc-btn" onclick="ketikKalkulator('.')">.</button>
+        </div>
+        <div class="modal-actions" style="margin-top: 20px; border-top: 1px solid #f1f5f9; padding-top: 20px;">
+            <button class="btn-close-modal" onclick="tutupKalkulator()">Batal</button>
+            <button class="btn-print-modal" onclick="simpanHasilKalkulator()">Simpan Hasil</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL KONFIRMASI HAPUS NOTA -->
+<div id="modal-hapus-nota" class="modal-overlay">
+    <div class="modal-bg" onclick="tutupModalHapusNota()"></div>
+    <div class="modal-card" style="text-align:center;">
+        <div class="trash-icon">🗑️</div>
+        <h2>Hapus Data?</h2>
+        <p id="teks-hapus-nota" style="font-size:14px; color:#64748b; margin-top:12px; line-height: 1.6;">
+            Data yang dihapus tidak dapat dikembalikan.
+        </p>
+        <div class="modal-actions" style="margin-top: 30px;">
+            <button class="btn-close-modal" onclick="tutupModalHapusNota()">BATAL</button>
+            <button id="btn-konfirmasi-hapus-nota" class="btn-delete-modal">YA, HAPUS</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL KONFIRMASI HAPUS KEUANGAN -->
+<div id="modal-hapus-keuangan" class="modal-overlay">
+    <div class="modal-bg" onclick="tutupModalHapusKeuangan()"></div>
+    <div class="modal-card" style="text-align:center; padding:30px; border-top: 5px solid #ef4444;">
+        <div style="font-size: 50px; margin-bottom: 15px;">🗑️</div>
+        <h2 style="margin:0; font-size: 1.4rem; color:#1e293b;">Hapus Catatan?</h2>
+        <p id="teks-hapus-keuangan" style="font-size:14px; color:#64748b; margin-top:10px; line-height: 1.5;">
+            Saldo akan dikembalikan otomatis.
+        </p>
+        <div class="modal-actions" style="margin-top: 25px;">
+            <button class="btn-close-modal" onclick="tutupModalHapusKeuangan()">Batal</button>
+            <button id="btn-konfirmasi-hapus-keuangan" class="btn-delete-modal">Ya, Hapus</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL PREMIUM -->
+<div id="modal-premium" class="modal-overlay">
+    <div class="modal-bg" onclick="tutupModalPremium()"></div>
+    <div class="modal-card" style="border: none; background: var(--bg-card); padding: 0; overflow: hidden; border-radius: 35px; max-width: 380px;">
+        <div style="background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); padding: 40px 20px; color: white; text-align: center; position: relative;">
+            <div style="position: absolute; top: -20px; left: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.2); filter: blur(30px); border-radius: 50%;"></div>
+            
+            <div style="width: 85px; height: 85px; background: white; border-radius: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; box-shadow: 0 15px 30px rgba(217, 119, 6, 0.4); transform: rotate(-5deg);">
+                <span style="font-size: 45px;">👑</span>
+            </div>
+            
+            <h2 id="premium-title" style="font-size: 1.6rem; font-weight: 900; margin-bottom: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">Upgrade Pro</h2>
+            <div style="display: inline-block; background: rgba(0,0,0,0.1); padding: 4px 12px; border-radius: 50px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;">Gun Original Project</div>
+        </div>
+
+        <div style="padding: 30px 25px;">
+            <p style="font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 25px; line-height: 1.6;">
+                Buka seluruh potensi aplikasi dan nikmati pengalaman tanpa batas.
+            </p>
+
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px;">
+                <div style="display: flex; align-items: center; gap: 15px; background: var(--bg-slate); padding: 12px 16px; border-radius: 20px; border: 1px solid var(--border-light);">
+                    <div style="background: #fef3c7; color: #d97706; width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    </div>
+                    <div style="font-size: 13px; font-weight: 700; color: var(--text-main);">Manajemen Kas & Alokasi Pos</div>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 15px; background: var(--bg-slate); padding: 12px 16px; border-radius: 20px; border: 1px solid var(--border-light);">
+                    <div style="background: #dcfce7; color: #16a34a; width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                    </div>
+                    <div style="font-size: 13px; font-weight: 700; color: var(--text-main);">Struk Bersih Tanpa Watermark</div>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 15px; background: var(--bg-slate); padding: 12px 16px; border-radius: 20px; border: 1px solid var(--border-light);">
+                    <div style="background: #e0e7ff; color: #4f46e5; width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+                    </div>
+                    <div style="font-size: 13px; font-weight: 700; color: var(--text-main);">Download & Share WhatsApp</div>
+                </div>
+            </div>
+
+            <button class="btn-save" onclick="hubungiAdmin()" style="width: 100%; height: 60px; font-size: 15px; background: linear-gradient(135deg, #fbbf24, #d97706); border: none; box-shadow: 0 10px 20px rgba(217, 119, 6, 0.25);">
+                Dapatkan Lisensi Premium
+            </button>
+            
+            <button onclick="tutupModalPremium()" style="width: 100%; background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: 800; cursor: pointer; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px;">
+                Mungkin Nanti
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL PENGATURAN (BARU) -->
+<div id="modal-pengaturan" class="modal-overlay" style="padding: 0 !important;">
+    <div class="modal-bg" onclick="tutupPengaturan()"></div>
+    <div class="modal-card modal-fullscreen">
+        <div class="modal-header" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white;">
+            <div style="background: rgba(255,255,255,0.1); width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </div>
+            <div>
+                <h3 style="margin:0; font-size: 1.1rem; font-weight: 900;">Pengaturan Umum</h3>
+                <span style="font-size: 10px; color: #94a3b8; font-weight: 700; text-transform: uppercase;">Konfigurasi Sistem</span>
+            </div>
+            <button onclick="tutupPengaturan()" style="margin-left: auto; background: rgba(255,255,255,0.1); border:none; width: 35px; height: 35px; border-radius: 10px; color: white; cursor: pointer;">✕</button>
+        </div>
+        <div class="modal-body" id="pengaturan-content-body" style="padding: 20px; background: #f8fafc;">
+            </div>
+    </div>
+</div>
+
+<!-- Modal json -->
+<div id="modal-restore-confirm" class="modal-overlay">
+    <div class="modal-bg" onclick="tutupModalRestore()"></div>
+    <div class="modal-card">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 50px;">📥</div>
+            <h2 style="margin: 0; font-size: 1.4rem;">Pulihkan Data?</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">Data yang ada saat ini akan diganti dengan data dari file backup.</p>
+        </div>
+
+        <div class="data-preview-box">
+            <div class="preview-item">
+                <span>Total Nota:</span>
+                <strong id="preview-nota-count">0</strong>
+            </div>
+            <div class="preview-item">
+                <span>Saldo Terakhir:</span>
+                <strong id="preview-saldo-val">Rp 0</strong>
+            </div>
+            <div class="preview-item" style="border:none;">
+                <span>Tanggal Backup:</span>
+                <strong id="preview-date">-</strong>
+            </div>
+        </div>
+
+        <div class="modal-actions" style="margin-top: 25px;">
+            <button class="btn-close-modal" onclick="tutupModalRestore()">BATAL</button>
+            <button id="btn-final-restore" class="btn-print-modal">YA, PULIHKAN</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Zona berbahaya -->
+<div id="modal-danger-zone" class="modal-overlay">
+    <div class="modal-bg" onclick="tutupModalDanger()"></div>
+    <div class="modal-card" style="border-top: 8px solid #e11d48;">
+        <div style="text-align: center;">
+            <div style="font-size: 50px; margin-bottom: 10px;">⚠️</div>
+            <h2 style="color: #e11d48; font-weight: 900;">Hapus Seluruh Data?</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 10px; line-height: 1.6;">
+                Tindakan ini akan menghapus <b>semua nota</b> dan <b>riwayat keuangan</b> secara permanen.
+            </p>
+        </div>
+
+        <div style="margin-top: 20px; background: #fef2f2; padding: 15px; border-radius: 15px; border: 1px solid #fee2e2;">
+            <p style="font-size: 11px; color: #991b1b; text-align: center; font-weight: 700;">
+                Ketik <span style="color: #e11d48; font-size: 13px;">HAPUS</span> di bawah untuk konfirmasi:
+            </p>
+            <input type="text" id="input-konfirmasi-bahaya" placeholder="..." 
+                style="margin-top: 10px; text-align: center; border: 2px solid #fecdd3; color: #e11d48; font-weight: 900; letter-spacing: 2px;">
+        </div>
+
+        <div class="modal-actions" style="margin-top: 25px;">
+            <button class="btn-close-modal" onclick="tutupModalDanger()">BATAL</button>
+            <button id="btn-eksekusi-reset" class="btn-delete-modal" style="opacity: 0.5; pointer-events: none;">RESET SEKARANG</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL SUKSES AKTIVASI -->
+<div id="modal-sukses-aktivasi" class="modal-overlay">
+    <div class="modal-bg" style="background: rgba(5, 150, 105, 0.9);"></div>
+    <div class="modal-card" style="text-align:center; padding:40px;">
+        <div style="font-size: 70px; margin-bottom: 20px;">✨</div>
+        <h2 style="margin:0; font-size: 1.6rem; color:#059669; font-weight: 900;">Aktivasi Berhasil!</h2>
+        <p style="font-size:14px; color:#64748b; margin-top:15px; line-height: 1.6;">
+            Selamat! Akun Anda kini telah menjadi <strong>Premium</strong>.<br>Semua fitur eksklusif telah terbuka selamanya.
+        </p>
+        <button onclick="location.reload()" style="margin-top: 30px; width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 18px; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 0 10px 20px rgba(5, 150, 105, 0.3);">
+            Mulai Gunakan Fitur Pro
+        </button>
+    </div>
+</div>
+
+<!-- MODAL GAGAL AKTIVASI -->
+<div id="modal-gagal-aktivasi" class="modal-overlay">
+    <div class="modal-bg" onclick="tutupModalGagal()"></div>
+    <div class="modal-card" style="text-align:center; padding:35px; border-top: 5px solid #ef4444;">
+        <div style="font-size: 60px; margin-bottom: 15px;">❌</div>
+        <h2 style="margin:0; font-size: 1.4rem; color:#b91c1c; font-weight: 900;">Aktivasi Gagal</h2>
+        <p style="font-size:14px; color:#64748b; margin-top:10px; line-height: 1.5;">
+            Kode aktivasi yang Anda masukkan <strong>tidak valid</strong>.
+        </p>
+        <div style="background: #fef2f2; padding: 12px; border-radius: 12px; margin: 15px 0; font-size: 12px; color: #991b1b; border: 1px solid #fee2e2;">
+            Pastikan kode dari Admin sudah sesuai dengan ID: <strong id="display-id-error">----</strong>
+        </div>
+        <button onclick="tutupModalGagal()" style="width:100%; background:#475569; color:white; border:none; padding:14px; border-radius:14px; font-weight:800; cursor:pointer;">
+            Coba Lagi
+        </button>
+    </div>
+</div>
+
+<!-- MODAL MENU KEUANGAN -->
+<div id="modal-menu-keuangan" class="modal-overlay" style="padding: 0 !important;">
+    <div class="modal-bg" onclick="tutupMenuKeuangan()"></div>
+    <div class="modal-card modal-fullscreen">
+        <div class="modal-header">
+            <button onclick="tutupMenuKeuangan()" style="background: #f1f5f9; border:none; width: 40px; height: 40px; border-radius: 12px; color: #1e293b; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </button>
+            <div>
+                <h2 style="margin:0; font-size: 1.1rem; color:#1e293b; font-weight: 900;">Manajemen Kas</h2>
+                <span style="font-size:9px; color:#10b981; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Gun Original Project</span>
+            </div>
+        </div>
+        <div class="modal-body" id="modal-keuangan-body">
+            <!-- Content akan diisi JS -->
+        </div>
+    </div>
+</div>
+
+<!-- MODAL INPUT KEUANGAN -->
+<div id="modal-input-keuangan" class="modal-overlay">
+    <div class="modal-bg" onclick="tutupModalInputKeuangan()"></div>
+    <div class="modal-card">
+        <div id="modal-input-header" style="padding: 20px; color: white; border-radius: 20px 20px 0 0;">
+            <h3 id="modal-input-title" style="margin: 0; font-size: 1.1rem; font-weight: 800;">Catatan Baru</h3>
+        </div>
+        <div style="padding: 25px;">
+            <input type="hidden" id="edit-index-keuangan">
+            <input type="hidden" id="tipe-keuangan">
+            <label class="label-small">Keterangan</label>
+            <input type="text" id="input-ket-keuangan" placeholder="Contoh: Beli Bensin" style="margin-bottom: 15px;">
+            <label class="label-small">Jumlah (Rp)</label>
+            <input type="number" id="input-jumlah-keuangan" placeholder="0">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-close-modal" onclick="tutupModalInputKeuangan()">Batal</button>
+            <button id="btn-simpan-keuangan" class="btn-print-modal" onclick="prosesSimpanKeuangan()">Simpan</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL SET POS -->
+<div id="modal-set-pos" class="modal-overlay" style="padding: 0 !important;">
+    <div class="modal-bg" onclick="tutupSetPos()"></div>
+    <div class="modal-card modal-fullscreen">
+        <div class="modal-header" style="background: #1e293b; color: white;">
+            <button onclick="tutupSetPos()" style="background: rgba(255,255,255,0.1); border:none; width: 35px; height: 35px; border-radius: 10px; color: white; cursor: pointer;">✕</button>
+            <div>
+                <h3 style="margin:0; font-size: 1.1rem;">Konfigurasi Alokasi</h3>
+                <span style="font-size: 10px; color: #94a3b8; font-weight: 700; text-transform: uppercase;">Strategi Keuangan</span>
+            </div>
+        </div>
+        <div class="modal-body">
+            <div id="status-total-pos" style="background: white; padding: 20px; border-radius: 24px; text-align: center; margin-bottom: 25px; border: 1px solid #e2e8f0;">
+                <div id="notif-persen" style="font-size: 2.2rem; font-weight: 900; line-height: 1;">0%</div>
+                <div id="notif-status-teks" style="font-size: 10px; font-weight: 800; margin-top: 8px; letter-spacing: 1px;">TOTAL PERSENTASE</div>
+                <div style="width: 100%; height: 6px; background: #f1f5f9; border-radius: 10px; margin-top: 15px; overflow: hidden;">
+                    <div id="progress-bar-total" style="width: 0%; height: 100%; background: var(--primary); transition: 0.3s;"></div>
+                </div>
+            </div>
+            <div id="form-edit-pos"></div>
+        </div>
+        <div style="padding: 20px 25px 30px; background: white; border-top: 1px solid #f1f5f9;">
+            <button id="btn-save-pos" onclick="simpanPengaturanPos()" class="btn-print-modal" style="width: 100%; height: 55px; font-size: 16px;">
+                TERAPKAN STRATEGI
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL RINCIAN STATISTIK -->
+<div id="modal-rincian-stat" class="modal-overlay" style="padding: 0 !important;">
+    <div class="modal-bg" onclick="tutupRincianStat()"></div>
+    <div class="modal-card modal-fullscreen">
+        <div class="modal-header" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;">
+            <div style="background: rgba(255,255,255,0.2); width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
+            </div>
+            <div>
+                <h3 style="margin: 0; font-size: 1.1rem; font-weight: 900;">Rincian Statistik</h3>
+                <span style="font-size: 10px; color: #d1fae5; font-weight: 700;">Analisis Data</span>
+            </div>
+            <button onclick="tutupRincianStat()" style="margin-left: auto; background: rgba(0,0,0,0.2); border: none; color: white; width: 32px; height: 32px; border-radius: 10px; cursor: pointer; font-weight: bold;">✕</button>
+        </div>
+        <div class="modal-body" id="modal-rincian-body">
+            <!-- Content akan diisi JS -->
+        </div>
+    </div>
+</div>
+
+<!-- HALAMAN PANDUAN -->
+<div id="halamanPanduan">
+    <div class="panduan-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="background: var(--primary); color: white; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: bold;">?</div>
+            <h2 style="margin: 0; font-size: 1.1rem; color: var(--text-main);">Panduan Penggunaan</h2>
+        </div>
+        <button onclick="tutupPanduan()" style="background: #fee2e2; color: #ef4444; border: none; width: 31px; height: 31px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+    </div>
+    <div class="panduan-content" id="panduan-content">
+        <!-- Content akan diisi JS -->
+    </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast">Pesan</div>
+
+<!-- MAIN CONTAINER -->
+<div class="container">
+    <!-- HEADER -->
+<header>
+    <div class="header-content">
+        <div style="flex: 1;">
+            <h1 class="header-title" id="main-header-title">Nota Timbangan</h1>
+            <div id="main-header-badge" class="header-badge" onclick="navigasi(document.querySelectorAll('.nav-item')[2], 'catatan')">
+                            <p class="header-badge-text" id="main-header-subtitle">Catatan Digital</p>
+            </div>
+        </div>
+
+        <div onclick="navigasi(document.querySelectorAll('.nav-item')[4], 'pengaturan')" class="logo-toggle-container">
+    <div id="header-logo-area">
+                <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto; overflow: visible;">
+                    <text x="50%" y="140" text-anchor="middle" font-family="'Brush Script MT', cursive" font-weight="900" font-size="150" fill="var(--primary)">Gun</text>
+                    <text x="50%" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="20" fill="#FF8C00" style="letter-spacing: 2px; text-transform: uppercase;">Original Project</text>
+                </svg>
+            </div>
+        </div> </div> </header>
+
+    <!-- FORM INPUT (Default Hidden for Home View) -->
+    <div class="form-container hidden" id="view-form">
+        <div class="form-card">
+            <div class="form-group">
+                <label class="label-small">Nama</label>
+                <input type="text" id="nama" placeholder="Nama...">
+            </div>
+            <div class="form-group">
+                <label class="label-small">Harga (Rp/Kg)</label>
+                <div class="price-input-wrapper">
+                    <span class="price-prefix">Rp</span>
+                    <input type="number" id="harga" placeholder="0">
+                </div>
+            </div>
+            <div id="area-berat" class="form-group">
+                <label class="label-small">Input Berat (Kg)</label>
+                <div class="weight-grid">
+                    <input type="number" class="input-berat" placeholder="Timbangan 1">
+                    <input type="number" class="input-berat" placeholder="Timbangan 2">
+                </div>
+            </div>
+            <div class="btn-row">
+                <button onclick="tambahBaris()" class="btn-add">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                </button>
+                <button onclick="simpanNota()" class="btn-save">Simpan Nota</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STATS CARD (Default Visible for Home View) -->
+    <div class="master-stat-card" id="view-stats">
+        <div class="master-stat-header">
+            <div>
+                <div class="master-stat-title">Total Keseluruhan</div>
+                <div class="master-stat-alltime"><span id="stat-berat-semua">0</span> <span style="font-size: 1rem; opacity: 0.8;">KG</span></div>
+            </div>
+            <button class="btn-rincian-stat" onclick="bukaRincianStat()">Rincian →</button>
+        </div>
+        <div class="master-stat-lastmonth">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+            Bulan Lalu: <strong id="stat-berat-bulan-lalu">0</strong> KG
+        </div>
+        <div class="sub-stats-container">
+            <div class="sub-stat-item">
+                <span class="sub-stat-label">Hari Ini</span>
+                <div class="sub-stat-val"><span id="stat-berat-hari">0</span><span class="sub-stat-unit"> KG</span></div>
+            </div>
+            <div class="sub-stat-item">
+                <span class="sub-stat-label">Minggu Ini</span>
+                <div class="sub-stat-val"><span id="stat-berat-minggu">0</span><span class="sub-stat-unit"> KG</span></div>
+            </div>
+            <div class="sub-stat-item">
+                <span class="sub-stat-label">Bulan Ini</span>
+                <div class="sub-stat-val"><span id="stat-berat-bulan" style="color: var(--primary);">0</span><span class="sub-stat-unit"> KG</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT (Always Visible) -->
+    <main id="view-list">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="input-cari" onkeyup="cariNota()" placeholder="Cari nama  atau tanggal...">
+        </div>
+        <div id="daftar-nota"></div>
+    </main>
+</div>
+
+    <!-- NAVIGATION -->
+<nav class="bottom-nav">
+    <!-- 1. HOME -->
+    <div class="nav-item active" onclick="navigasi(this, 'home')">
+        <div class="nav-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        </div>
+        <span class="nav-text">Home</span>
+    </div>
+
+    <!-- 2. ORANG (Form Nota) -->
+    <div class="nav-item" onclick="navigasi(this, 'orang')">
+        <div class="nav-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </div>
+        <span class="nav-text">Nota</span>
+    </div>
+
+    <!-- 3. CATATAN (Keuangan) - Icon Diubah -->
+    <div class="nav-item" onclick="navigasi(this, 'catatan')">
+        <div class="nav-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+        </div>
+        <span class="nav-text">Catatan</span>
+    </div>
+
+    <!-- 4. PANDUAN -->
+    <div class="nav-item" onclick="navigasi(this, 'panduan')">
+        <div class="nav-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+        </div>
+        <span class="nav-text">Panduan</span>
+    </div>
+
+    <!-- 5. PENGATURAN -->
+    <div class="nav-item" onclick="navigasi(this, 'pengaturan')">
+        <div class="nav-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        </div>
+        <span class="nav-text">Pengaturan</span>
+    </div>
+</nav>
+
+    <!-- SCRIPT -->
+    <script src="script.js"></script>
+    
+</body>
+</html>
