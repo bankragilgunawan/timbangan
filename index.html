@@ -374,21 +374,24 @@
     <!-- HEADER -->
 <header>
     <div class="header-content">
-        <div style="flex: 1;">
+        <div class="header-text-group">
             <h1 class="header-title" id="main-header-title">Nota Timbangan</h1>
             <div id="main-header-badge" class="header-badge" onclick="navigasi(document.querySelectorAll('.nav-item')[2], 'catatan')">
-                            <p class="header-badge-text" id="main-header-subtitle">Catatan Digital</p>
+                <span class="badge-dot"></span>
+                <p class="header-badge-text" id="main-header-subtitle">Catatan Digital</p>
             </div>
         </div>
 
-        <div onclick="navigasi(document.querySelectorAll('.nav-item')[4], 'pengaturan')" class="logo-toggle-container">
-    <div id="header-logo-area">
-                <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto; overflow: visible;">
-                    <text x="50%" y="140" text-anchor="middle" font-family="'Brush Script MT', cursive" font-weight="900" font-size="150" fill="var(--primary)">Gun</text>
-                    <text x="50%" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="20" fill="#FF8C00" style="letter-spacing: 2px; text-transform: uppercase;">Original Project</text>
+        <div onclick="navigasi(document.querySelectorAll('.nav-item')[4], 'pengaturan')" class="logo-wrapper">
+            <div id="header-logo-area" class="logo-container">
+                <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+                    <text x="50%" y="130" text-anchor="middle" class="logo-text-main">Gun</text>
+                    <text x="50%" y="175" text-anchor="middle" class="logo-text-sub">PROJECT</text>
                 </svg>
             </div>
-        </div> </div> </header>
+        </div>
+    </div> 
+</header>
 
     <!-- FORM INPUT (Default Hidden for Home View) -->
     <div class="form-container hidden" id="view-form">
@@ -508,6 +511,19 @@
 
     <!-- SCRIPT -->
     <script src="script.js"></script>
+
+<script>
+        // Registrasi Service Worker untuk Mode Offline
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(reg => console.log('Aplikasi siap digunakan offline!'))
+                    .catch(err => console.error('Gagal memuat mode offline', err));
+            });
+        }
+    </script>
     
-</body>
-</html>
+    <link rel="manifest" href="./manifest.json">
+    </body>
+    </html>
+
