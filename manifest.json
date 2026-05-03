@@ -2,7 +2,7 @@
   "name": "Nota Karet Digital Pro",
   "short_name": "Nota Karet",
   "description": "Aplikasi Nota Timbangan Digital Pro - Gun Project",
-  "start_url": "/timbangan/",
+  "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#1e293b",
   "theme_color": "#1e293b",
