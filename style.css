@@ -88,70 +88,108 @@
             padding-bottom: 100px; /* Space for nav */
         }
 
-        /* ---------- HEADER ---------- */
-        header {
-            background: var(--bg-card);
-            padding: 25px 20px 35px;
-            border-radius: 0 0 35px 35px;
-            box-shadow: var(--shadow-md);
-            margin-bottom: 20px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
+/* ---------- HEADER RE-DESIGN ---------- */
+header {
+    background: var(--bg-card);
+    padding: 20px 24px 10px; /* Spasi lebih lega */
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 2px solid var(--border-light);
+    margin-bottom: 5px;
+}
 
-        .header-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
-        .header-title {
-            font-size: 32px;
-            font-weight: 800;
-            color: var(--text-main);
-            line-height: 1.1;
-            margin: 0;
-        }
+.header-text-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
 
-        .header-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 6px;
-            cursor: pointer;
-            padding: 4px;
-        }
+.header-title {
+    font-size: 24px; /* Ukuran lebih proporsional */
+    font-weight: 900;
+    color: var(--text-main);
+    letter-spacing: -0.5px;
+}
 
-        .header-badge-icon {
-            background: #ecfdf5; /* Tetap hijau muda karena ikon kecil, bisa ubah ke var jika perlu */
-            padding: 4px;
-            border-radius: 6px;
-            display: flex;
-        }
+/* Badge dengan dot indikator */
+.header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(5, 150, 105, 0.08);
+    padding: 4px 10px;
+    border-radius: 50px;
+    width: fit-content;
+}
 
-        .header-badge-text {
-            font-size: 9px;
-            color: var(--primary);
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        #header-logo-area {
+.badge-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--primary);
+}
+
+.header-badge-text {
+    font-size: 10px;
+    color: var(--primary);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* --- LOGO STYLING --- */
+.logo-wrapper {
+    cursor: pointer;
+    perspective: 1000px;
+}
+
+.logo-container {
+    width: 85px; /* Sedikit lebih kecil agar tidak mendominasi */
+    height: 85px;
+    background: var(--bg-slate);
+    border-radius: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
+    border: 1px solid var(--border-light);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    padding: 10px;
 }
 
-#header-logo-area:active {
-    transform: scale(0.9); /* Efek membal saat ditekan */
+.logo-container:active {
+    transform: scale(0.9) rotate(5deg);
 }
 
+.logo-text-main {
+    font-family: 'Brush Script MT', cursive;
+    font-size: 160px;
+    fill: var(--primary);
+    filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1));
+}
 
+.logo-text-sub {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    fill: #FF8C00;
+    letter-spacing: 8px;
+}
+
+/* Dark Mode Adjustments */
+[data-theme="dark"] .logo-container {
+    background: #1e293b;
+    border-color: #334155;
+}
         /* ---------- LOGO TOGGLE ---------- */
 .logo-toggle-container {
     width: 110px;
@@ -309,7 +347,7 @@
         /* ---------- MASTER STATS CARD ---------- */
         .master-stat-card {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            margin: 0 24px 30px; 
+            margin: 10px 24px 20px; 
             border-radius: 28px;
             padding: 24px 20px 20px;
             color: white;
@@ -1485,4 +1523,3 @@
     color: white;
     transform: scale(0.98);
 }
-
